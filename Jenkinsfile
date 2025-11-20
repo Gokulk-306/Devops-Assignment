@@ -13,11 +13,23 @@ pipeline {
             }
         }
 
+        stage('Verify Workspace') {
+            steps {
+                sh '''
+                echo "Current Directory:"
+                pwd
+                echo "List files:"
+                ls -la
+                '''
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 sh '''
                 python3 -m venv venv
                 . venv/bin/activate
+                pip install --upgrade pip
                 pip install -r requirements.txt
                 '''
             }
@@ -26,6 +38,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
+                . venv/bin/activate
                 echo "Running basic health check..."
                 '''
             }
@@ -52,22 +65,17 @@ pipeline {
 
     post {
         success {
-            echo "Build & Deployment Successful !"
-
             emailext(
                 subject: "Jenkins Build Successful !",
-                body: "Hello,\n\nThe Jenkins CI/CD pipeline completed successfully.\n\nRegards,\nJenkins",
-                to: "ceecgokul2024@gmail.com"
+                body: "Jenkins pipeline completed successfully.",
+                to: "gokulsmart515@gmail.com"
             )
         }
-
         failure {
-            echo "Build Failed !!"
-
             emailext(
                 subject: "Jenkins Build Failed !!",
-                body: "Hello,\n\nThe Jenkins CI/CD pipeline has failed.\nPlease check the logs.\n\nRegards,\nJenkins",
-                to: "ceecgokul2024@gmail.com"
+                body: "Jenkins pipeline failed. Please check logs.",
+                to: "gokulsmart515@gmail.com"
             )
         }
     }
