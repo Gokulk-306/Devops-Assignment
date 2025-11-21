@@ -27,7 +27,7 @@ jobs:
       - name: Run basic tests
         run: |
           echo "No test suite yet. Running syntax check..."
-          python -m py_compile app.py
+          python -m py_compile app/app.py
 
   docker-build-push:
     name: Build & Push Docker Image
