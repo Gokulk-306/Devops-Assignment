@@ -52,10 +52,7 @@ jobs:
 
       - name: Push image to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/devops-python-app:$IMAGE_TAG
-
-      - name: Save image tag for GitOps job
-        run: echo "IMAGE_TAG=${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/devops-python-app:${{ env.IMAGE_TAG }}
 
   update-gitops:
     name: Update GitOps Repo
@@ -71,12 +68,12 @@ jobs:
 
       - name: Update deployment.yaml with new image tag
         run: |
-          sed -i "s|image: .*|image: ${{ secrets.DOCKERHUB_USERNAME }}/devops-python-app:${{ env.IMAGE_TAG }}|" k8s/deployment.yaml
+          sed -i "s|^ *image: .*|          image: ${{ secrets.DOCKERHUB_USERNAME }}/devops-python-app:${{ env.IMAGE_TAG }}|" k8s/deployment.yaml
 
       - name: Commit & Push updated manifest
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git add k8s/deployment.yaml
-          git commit -m "GitOps Update: Deploy image ${{ env.IMAGE_TAG }}"
+          git commit -m "GitOps Update: Deploy image ${{ env.IMAGE_TAG }}" || echo "No changes to commit"
           git push
