@@ -71,7 +71,7 @@ jobs:
 
       - name: Update deployment.yaml with new image tag
         run: |
-          sed -i "s|image:.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/devops-python-app:${{ env.IMAGE_TAG }}|" k8s/deployment.yaml
+          sed -i "s|image: .*|image: ${{ secrets.DOCKERHUB_USERNAME }}/devops-python-app:${{ env.IMAGE_TAG }}|" k8s/deployment.yaml
 
       - name: Commit & Push updated manifest
         run: |
